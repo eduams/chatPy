@@ -1,20 +1,20 @@
-from openai import AzureOpenAI
+import openai
 
-# gets the API Key from environment variable AZURE_OPENAI_API_KEY
-client = AzureOpenAI(
-    # https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#rest-api-versioning
-    api_version="2023-07-01-preview",
-    # https://learn.microsoft.com/en-us/azure/cognitive-services/openai/how-to/create-resource?pivots=web-portal#create-a-resource
-    azure_endpoint="https://example-endpoint.openai.azure.com",
-)
+openai.api_key = "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"
 
-completion = client.chat.completions.create(
-    model="deployment-name",  # e.g. gpt-35-instant
-    messages=[
-        {
-            "role": "user",
-            "content": "How do I output all files in a directory using Python?",
-        },
-    ],
-)
-print(completion.model_dump_json(indent=2))
+def conversar(texto):
+    resposta = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Suponha que você é um instrutor de Python."},
+            {"role": "user", "content": texto},
+        ],
+        temperature=0.7,
+    )
+    return resposta['choices'][0]['message']['content']
+
+
+while True:
+    prompt = input("Usuário: ")
+    resposta_chatgpt = conversar(prompt)
+    print("Bot: " + resposta_chatgpt)
