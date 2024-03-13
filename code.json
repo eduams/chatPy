@@ -1,0 +1,222 @@
+[
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <limits.h>\n#include <stdio.h>\n \nfoo(void) {\n return UINT_MAX;\n}\n \nint main(void) {\n long long int c = foo();\n printf(\"%lld\\n\", c);\n return 0;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "int i1 = 10; \/* Definition, external linkage *\/\nstatic int i2 = 20; \/* Definition, internal linkage *\/\nextern int i3 = 30; \/* Definition, external linkage *\/\nint i4; \/* Tentative definition, external linkage *\/\nstatic int i5; \/* Tentative definition, internal linkage *\/\n \nint i1; \/* Valid tentative definition *\/\nint i2; \/* Undefined, linkage disagreement with previous *\/\nint i3; \/* Valid tentative definition *\/\nint i4; \/* Valid tentative definition *\/\nint i5; \/* Undefined, linkage disagreement with previous *\/\n \nint main(void) {\n \/* ... *\/\n return 0;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <inttypes.h>\n#include <stdio.h>\n \nstatic const int_fast16_t INTFAST16_LIMIT_MAX = 12000;\n \nvoid print_fast16(int_fast16_t val) {\n enum { SIZE_MAX = 80 };\n char buf[SIZE_MAX];\n if (INTFAST16_LIMIT_MAX < val) {\n sprintf(buf, \"The value is too large\");\n } else {\n snprintf(buf, SIZE_MAX, \"The value is %\" PRIdFAST16, val);\n }\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n \nstruct flexArrayStruct {\n int num;\n int data[1];\n};\n \nvoid func(size_t array_size) {\n \/* Space is allocated for the struct *\/\n struct flexArrayStruct *structP\n = (struct flexArrayStruct *)\n malloc(sizeof(struct flexArrayStruct)\n + sizeof(int) * (array_size - 1));\n if (structP == NULL) {\n \/* Handle malloc failure *\/\n }\n \n structP->num = array_size;\n \n \/*\n * Access data[] as if it had been allocated\n * as data[array_size].\n *\/\n for (size_t i = 0; i < array_size; ++i) {\n structP->data[i] = 1;\n }\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <string.h>\n \nstruct test {\n int a;\n char b;\n int c;\n};\n \n\/* Safely copy bytes to user space *\/\nextern int copy_to_user(void *dest, void *src, size_t size);\n \nvoid do_stuff(void *usr_buf) {\n struct test arg;\n \n \/* Set all bytes (including padding bytes) to zero *\/\n memset(&arg, 0, sizeof(arg));\n \n arg.a = 1;\n arg.b = 2;\n arg.c = 3;\n \n copy_to_user(usr_buf, &arg, sizeof(arg));\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "\/* In a.c *\/\nextern int i; \/* UB 15 *\/\n \nint f(void) {\n return ++i; \/* UB 37 *\/\n}\n \n\/* In b.c *\/\nshort i; \/* UB 15 *\/"
+    },
+    null,
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "void func(unsigned int ui_a, unsigned int ui_b) {\n unsigned int usum = ui_a + ui_b;\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "void func(unsigned int ui_a, unsigned int ui_b) {\n unsigned int udiff = ui_a - ui_b;\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "pen->num_vertices = _cairo_pen_vertices_needed(\n gstate->tolerance, radius, &gstate->ctm\n);\npen->vertices = malloc(\n pen->num_vertices * sizeof(cairo_pen_vertex_t)\n);"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <limits.h>\n \nvoid func(void) {\n unsigned long int u_a = ULONG_MAX;\n signed char sc;\n sc = (signed char)u_a; \/* Cast eliminates warning *\/\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <limits.h>\n \nvoid func(signed int si) {\n \/* Cast eliminates warning *\/\n unsigned int ui = (unsigned int)si;\n \n \/* ... *\/\n}\n \n\/* ... *\/\n \nfunc(INT_MIN);"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <limits.h>\n \nvoid func(void) {\n signed long int s_a = LONG_MAX;\n signed char sc = (signed char)s_a; \/* Cast eliminates warning *\/\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <limits.h>\n \nvoid func(void) {\n unsigned long int u_a = ULONG_MAX;\n unsigned char uc = (unsigned char)u_a; \/* Cast eliminates warning *\/\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <time.h>\n \nvoid func(void) {\n time_t now = time(NULL);\n if (now != -1) {\n \/* Continue processing *\/\n }\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <string.h>\n#include <stddef.h>\n \nint *init_memory(int *array, size_t n) {\n return memset(array, 4096, n); \n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "void func(signed int si_a, signed int si_b) {\n signed int sum = si_a + si_b;\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "void func(signed int si_a, signed int si_b) {\n signed int diff = si_a - si_b;\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "void func(signed int si_a, signed int si_b) {\n signed int result = si_a * si_b;\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "void func(signed long s_a, signed long s_b) {\n signed long result;\n if (s_b == 0) {\n \/* Handle error *\/\n } else {\n result = s_a \/ s_b;\n }\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <limits.h>\n \nvoid func(signed long s_a, signed long s_b) {\n signed long result;\n if ((s_b == 0 ) || ((s_a == LONG_MIN) && (s_b == -1))) {\n \/* Handle error *\/\n } else {\n result = s_a % s_b;\n } \n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "void func(signed long s_a) {\n signed long result = -s_a;\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <limits.h>\n \nvoid func(signed long s_a, signed long s_b) {\n signed long result;\n if ((s_a == LONG_MIN) && (s_b == -1)) {\n \/* Handle error *\/\n } else {\n result = s_a \/ s_b;\n }\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <limits.h>\n \nvoid func(signed long s_a, signed long s_b) {\n signed long result;\n if ((s_a == LONG_MIN) && (s_b == -1)) {\n \/* Handle error *\/\n } else {\n result = s_a % s_b;\n }\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "void func(unsigned int ui_a, unsigned int ui_b) {\n unsigned int uresult = ui_a << ui_b;\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <limits.h>\n#include <stddef.h>\n#include <inttypes.h>\n \nvoid func(signed long si_a, signed long si_b) {\n signed long result;\n if (si_a > (LONG_MAX >> si_b)) {\n \/* Handle error *\/\n } else {\n result = si_a << si_b;\n }\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "void func(unsigned int ui_a, unsigned int ui_b) {\n unsigned int uresult = ui_a >> ui_b;\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <limits.h>\n \nunsigned int pow2(unsigned int exp) {\n if (exp >= sizeof(unsigned int) * CHAR_BIT) {\n \/* Handle error *\/\n }\n return 1 << exp;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "void f(void) {\n char *ptr;\n \/* ... *\/\n unsigned int number = (unsigned int)ptr;\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "void func(unsigned int flag) {\n char *ptr;\n \/* ... *\/\n unsigned int number = (unsigned int)ptr;\n number = (number & 0x7fffff) | (flag << 23);\n ptr = (char *)number;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "unsigned int *g(void) {\n unsigned int *ptr = 0xdeadbeef;\n \/* ... *\/\n return ptr;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "enum { TABLESIZE = 100 };\n \nstatic int table[TABLESIZE];\n \nint *f(int index) {\n if (index < TABLESIZE) {\n return table + index;\n }\n return NULL;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "error_status_t _RemoteActivation(\n \/* ... *\/, WCHAR *pwszObjectName, ... ) {\n *phr = GetServerPath(\n pwszObjectName, &pwszObjectName);\n \/* ... *\/\n}\n \nHRESULT GetServerPath(\n WCHAR *pwszPath, WCHAR **pwszServerPath ){\n WCHAR *pwszFinalPath = pwszPath;\n WCHAR wszMachineName[MAX_COMPUTERNAME_LENGTH_FQDN+1];\n hr = GetMachineName(pwszPath, wszMachineName);\n *pwszServerPath = pwszFinalPath;\n}\n \nHRESULT GetMachineName(\n WCHAR *pwszPath,\n WCHAR wszMachineName[MAX_COMPUTERNAME_LENGTH_FQDN+1])\n{\n pwszServerName = wszMachineName;\n LPWSTR pwszTemp = pwszPath + 2;\n while (*pwszTemp != L'\\\\')\n *pwszServerName++ = *pwszTemp++;\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n \nstatic int *table = NULL;\nstatic size_t size = 0;\n \nint insert_in_table(size_t pos, int value) {\n if (size < pos) {\n int *tmp;\n size = pos + 1;\n tmp = (int *)realloc(table, sizeof(*table) * size);\n if (tmp == NULL) {\n return -1; \/* Failure *\/\n }\n table = tmp;\n }\n \n table[pos] = value;\n return 0;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stddef.h>\n#define COLS 5\n#define ROWS 7\nstatic int matrix[ROWS][COLS];\n \nvoid init_matrix(int x) {\n for (size_t i = 0; i < COLS; i++) {\n for (size_t j = 0; j < ROWS; j++) {\n matrix[i][j] = x;\n }\n }\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n \nstruct S {\n size_t len;\n char buf[]; \/* Flexible array member *\/\n};\n \nconst char *find(const struct S *s, int c) {\n const char *first = s->buf;\n const char *last = s->buf + s->len;\n \n while (first++ != last) { \/* Undefined behavior *\/\n if (*first == c) {\n return first;\n }\n }\n return NULL;\n}\n \nvoid g(void) {\n struct S *s = (struct S *)malloc(sizeof(struct S));\n if (s == NULL) {\n \/* Handle error *\/\n }\n s->len = 0;\n find(s, 'a');\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <string.h>\n#include <stdlib.h>\n \nchar *init_block(size_t block_size, size_t offset,\n char *data, size_t data_size) {\n char *buffer = malloc(block_size);\n if (data_size > block_size || block_size - data_size < offset) {\n \/* Data won't fit in buffer, handle error *\/\n }\n memcpy(buffer + offset, data, data_size);\n return buffer;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stddef.h>\n \nextern void do_work(int *array, size_t size);\n \nvoid func(size_t size) {\n int vla[size];\n do_work(vla, size);\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n#include <string.h>\n \nenum { N1 = 4096 };\n \nvoid *func(size_t n2) {\n typedef int A[n2][N1];\n \n A *array = malloc(sizeof(A));\n if (!array) {\n \/* Handle error *\/\n return NULL;\n }\n \n for (size_t i = 0; i != n2; ++i) {\n memset(array[i], 0, N1 * sizeof(int));\n }\n \n return array;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stddef.h>\n \nenum { SIZE = 32 };\n \nvoid func(void) {\n int nums[SIZE];\n int end;\n int *next_num_ptr = nums;\n size_t free_elements;\n \n \/* Increment next_num_ptr as array fills *\/\n \n free_elements = &end - next_num_ptr;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "struct numbers {\n short num_a, num_b, num_c;\n};\n \nint sum_numbers(const struct numbers *numb){\n int total = 0;\n const short *numb_ptr;\n \n for (numb_ptr = &numb->num_a;\n numb_ptr <= &numb->num_c;\n numb_ptr++) {\n total += *(numb_ptr);\n }\n \n return total;\n}\n \nint main(void) {\n struct numbers my_numbers = { 1, 2, 3 };\n sum_numbers(&my_numbers);\n return 0;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <string.h>\n#include <wchar.h>\n \nstatic const char str[] = \"Hello world\";\nstatic const wchar_t w_str[] = L\"Hello world\";\nvoid func(void) {\n char buffer[32];\n wchar_t w_buffer[32];\n memcpy(buffer, str, sizeof(str)); \/* Compliant *\/\n wmemcpy(w_buffer, w_str, sizeof(w_str)); \/* Noncompliant *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n#include <string.h>\n \nvoid f1(size_t nchars) {\n char *p = (char *)malloc(nchars);\n \/* ... *\/\n const size_t n = nchars + 1;\n \/* ... *\/\n memset(p, 0, n);\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <string.h>\n \nvoid f2(void) {\n const size_t ARR_SIZE = 4;\n long a[ARR_SIZE];\n const size_t n = sizeof(a);\n void *p = a;\n \n memset(p, 0, n);\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <string.h>\n \nvoid f4() {\n char p[40];\n const char *q = \"Too short\";\n size_t n = sizeof(p);\n memcpy(p, q, n);\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdint.h>\n#include <stdio.h>\n \nstruct obj {\n char c;\n long long i;\n};\n \nvoid func(FILE *f, struct obj *objs, size_t num_objs) {\n const size_t obj_size = 16;\n if (num_objs > (SIZE_MAX \/ obj_size) ||\n num_objs != fwrite(objs, obj_size, num_objs, f)) {\n \/* Handle error *\/\n }\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stddef.h>\n#include <stdio.h>\n \nvoid f(FILE *file) {\n enum { BUFFER_SIZE = 1024 };\n wchar_t wbuf[BUFFER_SIZE];\n \n const size_t size = sizeof(*wbuf);\n const size_t nitems = sizeof(wbuf);\n \n size_t nread = fread(wbuf, size, nitems, file);\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "int dtls1_process_heartbeat(SSL *s) { \n unsigned char *p = &s->s3->rrec.data[0], *pl;\n unsigned short hbtype;\n unsigned int payload;\n unsigned int padding = 16; \/* Use minimum padding *\/\n \n \/* Read type and payload length first *\/\n hbtype = *p++;\n n2s(p, payload);\n pl = p;\n \n \/* ... More code ... *\/\n \n if (hbtype == TLS1_HB_REQUEST) {\n unsigned char *buffer, *bp;\n int r;\n \n \/*\n * Allocate memory for the response; size is 1 byte\n * message type, plus 2 bytes payload length, plus\n * payload, plus padding.\n *\/\n buffer = OPENSSL_malloc(1 + 2 + payload + padding);\n bp = buffer;\n \n \/* Enter response type, length, and copy payload *\/\n *bp++ = TLS1_HB_RESPONSE;\n s2n(payload, bp);\n memcpy(bp, pl, payload);\n \n \/* ... More code ... *\/\n }\n \/* ... More code ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "enum { INTBUFSIZE = 80 };\n \nextern int getdata(void);\nint buf[INTBUFSIZE];\n \nvoid func(void) {\n int *buf_ptr = buf;\n \n while (buf_ptr < (buf + sizeof(buf))) {\n *buf_ptr++ = getdata();\n }\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <string.h>\n#include <stdlib.h>\n#include <stddef.h>\n \nstruct big {\n unsigned long long ull_a;\n unsigned long long ull_b;\n unsigned long long ull_c;\n int si_e;\n int si_f;\n};\n \nvoid func(void) {\n size_t skip = offsetof(struct big, ull_b);\n struct big *s = (struct big *)malloc(sizeof(struct big));\n if (s == NULL) {\n \/* Handle malloc() error *\/\n }\n \n memset(s + skip, 0, sizeof(struct big) - skip);\n \/* ... *\/\n free(s);\n s = NULL;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <wchar.h>\n#include <stdio.h>\n \nenum { WCHAR_BUF = 128 };\n \nvoid func(void) {\n wchar_t error_msg[WCHAR_BUF];\n \n wcscpy(error_msg, L\"Error: \");\n fgetws(error_msg + wcslen(error_msg) * sizeof(wchar_t),\n WCHAR_BUF - 7, stdin);\n \/* ... *\/\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdio.h>\n#include <string.h>\n \nconst char *get_dirname(const char *pathname) {\n char *slash;\n slash = strrchr(pathname, '\/');\n if (slash) {\n *slash = '\\0'; \/* Undefined behavior *\/\n }\n return pathname;\n}\n \nint main(void) {\n puts(get_dirname(__FILE__));\n return 0;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stddef.h>\n \nvoid copy(size_t n, char src[n], char dest[n]) {\n size_t i;\n \n for (i = 0; src[i] && (i < n); ++i) {\n dest[i] = src[i];\n }\n dest[i] = '\\0';\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdio.h>\n \n#define BUFFER_SIZE 1024\n \nvoid func(void) {\n char buf[BUFFER_SIZE];\n if (gets(buf) == NULL) {\n \/* Handle error *\/\n }\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdio.h>\n \nenum { BUFFERSIZE = 32 };\n \nvoid func(void) {\n char buf[BUFFERSIZE];\n char *p;\n int ch;\n p = buf;\n while ((ch = getchar()) != '\\n' && ch != EOF) {\n *p++ = (char)ch;\n }\n *p++ = 0;\n if (ch == EOF) {\n \/* Handle EOF or error *\/\n }\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n#include <wchar.h>\n \nwchar_t *cur_msg = NULL;\nsize_t cur_msg_size = 1024;\nsize_t cur_msg_len = 0;\n \nvoid lessen_memory_usage(void) {\n wchar_t *temp;\n size_t temp_size;\n \n \/* ... *\/\n \n if (cur_msg != NULL) {\n temp_size = cur_msg_size \/ 2 + 1;\n temp = realloc(cur_msg, temp_size * sizeof(wchar_t));\n \/* temp &and cur_msg may no longer be null-terminated *\/\n if (temp == NULL) {\n \/* Handle error *\/\n }\n \n cur_msg = temp;\n cur_msg_size = temp_size;\n cur_msg_len = wcslen(cur_msg);\n }\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <string.h>\n \nenum { STR_SIZE = 32 };\n \nsize_t func(const char *source) {\n char c_str[STR_SIZE];\n size_t ret = 0;\n \n if (source) {\n c_str[sizeof(c_str) - 1] = '\\0';\n strncpy(c_str, source, sizeof(c_str));\n ret = strlen(c_str);\n } else {\n \/* Handle null pointer *\/\n }\n return ret;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "static int yy_string_get(void) {\n register unsigned char *c_str;\n register int c;\n \n c_str = bash_input.location.string;\n c = EOF;\n \n \/* If the string doesn't exist or is empty, EOF found *\/\n if (c_str && *c_str) {\n c = *c_str++;\n bash_input.location.string = c_str;\n }\n return (c);\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <limits.h>\n#include <stddef.h>\n \nstatic const char table[UCHAR_MAX + 1] = { 'a' \/* ... *\/ };\n \nptrdiff_t first_not_in_table(const char *c_str) {\n for (const char *s = c_str; *s; ++s) {\n if (table[(unsigned int)*s] != *s) {\n return s - c_str;\n }\n }\n return -1;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <ctype.h>\n#include <string.h>\n \nsize_t count_preceding_whitespace(const char *s) {\n const char *t = s;\n size_t length = strlen(s) + 1;\n while (isspace(*t) && (t - s < length)) {\n ++t;\n }\n return t - s;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <wchar.h>\n \nvoid func(void) {\n char narrow_str1[] = \"01234567890123456789\";\n char narrow_str2[] = \"0000000000\";\n \n wcsncpy(narrow_str2, narrow_str1, 10);\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n#include <string.h>\n \nvoid func(void) {\n wchar_t wide_str1[] = L\"0123456789\";\n wchar_t *wide_str2 = (wchar_t*)malloc(strlen(wide_str1) + 1);\n if (wide_str2 == NULL) {\n \/* Handle error *\/\n }\n \/* ... *\/\n free(wide_str2);\n wide_str2 = NULL;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n \nstruct node {\n int value;\n struct node *next;\n};\n \nvoid free_list(struct node *head) {\n for (struct node *p = head; p != NULL; p = p->next) {\n free(p);\n }\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n#include <string.h>\n \nint main(int argc, char *argv[]) {\n char *return_val = 0;\n const size_t bufsize = strlen(argv[0]) + 1;\n char *buf = (char *)malloc(bufsize);\n if (!buf) {\n return EXIT_FAILURE;\n }\n \/* ... *\/\n free(buf);\n \/* ... *\/\n strcpy(buf, argv[0]);\n \/* ... *\/\n return EXIT_SUCCESS;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n \nvoid f(char *c_str1, size_t size) {\n char *c_str2 = (char *)realloc(c_str1, size);\n if (c_str2 == NULL) {\n free(c_str1);\n }\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n \nenum { BUFFER_SIZE = 32 };\n \nint f(void) {\n char *text_buffer = (char *)malloc(BUFFER_SIZE);\n if (text_buffer == NULL) {\n return -1;\n }\n return 0;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stddef.h>\n \nstruct flex_array_struct {\n size_t num;\n int data[];\n};\n \nvoid func(void) {\n struct flex_array_struct flex_struct;\n size_t array_size = 4;\n \n \/* Initialize structure *\/\n flex_struct.num = array_size;\n \n for (size_t i = 0; i < array_size; ++i) {\n flex_struct.data[i] = 0;\n }\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stddef.h>\n \nstruct flex_array_struct {\n size_t num;\n int data[];\n};\n \nvoid func(struct flex_array_struct *struct_a,\n struct flex_array_struct *struct_b) {\n *struct_b = *struct_a;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdio.h>\n#include <stdlib.h>\n \nstruct flex_array_struct {\n size_t num;\n int data[];\n};\n \nvoid print_array(struct flex_array_struct struct_p) {\n puts(\"Array is: \");\n for (size_t i = 0; i < struct_p.num; ++i) {\n printf(\"%d \", struct_p.data[i]);\n }\n putchar('\\n');\n}\n \nvoid func(void) {\n struct flex_array_struct *struct_p;\n size_t array_size = 4;\n \n \/* Space is allocated for the struct *\/\n struct_p = (struct flex_array_struct *)malloc(\n sizeof(struct flex_array_struct)\n + sizeof(int) * array_size);\n if (struct_p == NULL) {\n \/* Handle error *\/\n }\n struct_p->num = array_size;\n \n for (size_t i = 0; i < array_size; ++i) {\n struct_p->data[i] = i;\n }\n print_array(*struct_p);\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n#include <string.h>\n#include <stdio.h>\n \nenum { MAX_ALLOCATION = 1000 };\n \nint main(int argc, const char *argv[]) {\n char *c_str = NULL;\n size_t len;\n \n if (argc == 2) {\n len = strlen(argv[1]) + 1;\n if (len > MAX_ALLOCATION) {\n \/* Handle error *\/\n }\n c_str = (char *)malloc(len);\n if (c_str == NULL) {\n \/* Handle error *\/\n }\n strcpy(c_str, argv[1]);\n } else {\n c_str = \"usage: $>a.exe [string]\";\n printf(\"%s\\n\", c_str);\n }\n free(c_str);\n return 0;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n \nenum { BUFSIZE = 256 };\n \nvoid f(void) {\n char buf[BUFSIZE];\n char *p = (char *)realloc(buf, 2 * BUFSIZE);\n if (p == NULL) {\n \/* Handle error *\/\n }\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n#include <time.h>\n \nstruct tm *make_tm(int year, int mon, int day, int hour,\n int min, int sec) {\n struct tm *tmb;\n tmb = (struct tm *)malloc(sizeof(tmb));\n if (tmb == NULL) {\n return NULL;\n }\n *tmb = (struct tm) {\n .tm_sec = sec, .tm_min = min, .tm_hour = hour,\n .tm_mday = day, .tm_mon = mon, .tm_year = year\n };\n return tmb;\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdint.h>\n#include <stdlib.h>\n \nvoid function(size_t len) {\n long *p;\n if (len == 0 || len > SIZE_MAX \/ sizeof(long)) {\n \/* Handle overflow *\/\n }\n p = (long *)malloc(len * sizeof(int));\n if (p == NULL) {\n \/* Handle error *\/\n }\n free(p);\n}"
+    },
+    {
+     "#include <stdio.h>\n \nconst char *p;\nvoid dont_do_this(void) {\n const char c_str[] = \"This will change\";\n p = c_str; \/* Dangerous *\/\n}\n \nvoid innocuous(void) {\n printf(\"%s\\n\", p);\n}\n \nint main(void) {\n dont_do_this();\n innocuous();\n return 0;\n}": "#include <stdlib.h>\n \nvoid func(void) {\n size_t resize = 1024;\n size_t alignment = 1 << 12;\n int *ptr;\n int *ptr1;\n \n if (NULL == (ptr = (int *)aligned_alloc(alignment, sizeof(int)))) {\n \/* Handle error *\/\n }\n \n if (NULL == (ptr1 = (int *)realloc(ptr, resize))) {\n \/* Handle error *\/\n }\n}"
+    }
+   ]
